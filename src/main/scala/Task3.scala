@@ -8,15 +8,32 @@ import java.util.regex.Pattern
 import scala.jdk.CollectionConverters.*
 import java.io.IOException
 import java.util
+import com.typesafe.config.*
+
+import Helper.Definitions
 
 object Task3 {
+  val definitions = new Definitions()
+  val TaskConfig = "Task3"
+  val Common = "Common"
+
+  /**Task3 Mapper
+   *
+   *This Mapper maps the logs into the different types of message types.
+   *
+   * Output of the mapper is in format : MessageType,1
+   *
+   * eg DEBUG,1
+   */
   class Map extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable]:
     private final val one = new IntWritable(1)
     private val word = new Text()
 
     @throws[IOException]
     override def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
-      val pattern = Pattern.compile("(INFO|WARN|DEBUG|ERROR)")
+      val config = ConfigFactory.load()
+      val conf = config.getConfig(definitions.PAT)
+      val pattern = Pattern.compile(conf.getString(definitions.ERR_PAT)) //Check all the patterns
       val matcher = pattern.matcher(value.toString)
       if (matcher.find()) {
         val msgType = matcher.group()
@@ -24,6 +41,15 @@ object Task3 {
         output.collect(word, one)
       }
 
+  /**Task3 Reducer
+   *
+   *This Reducer just adds the values from the mapper and gives the count of log types
+   *
+   * Output of the reducer is in format : MessageType,Count
+   *
+   * Example : DEBUG,7
+   *
+   */
   class Reduce extends MapReduceBase with Reducer[Text, IntWritable, Text, IntWritable]:
     override def reduce(key: Text, values: util.Iterator[IntWritable], output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
       val sum = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(valueOne.get() + valueTwo.get()))
@@ -31,13 +57,15 @@ object Task3 {
 
   @main def runMapReduce(inputPath: String, outputPath: String) =
     require(!inputPath.isBlank && !outputPath.isBlank)
-    println(inputPath)
+    val configuration = ConfigFactory.load()
+    val task_config = configuration.getConfig(TaskConfig)
+    val comm_config = configuration.getConfig(Common)
     val conf: JobConf = new JobConf(this.getClass)
-    conf.setJobName("WordCount")
-    conf.set("fs.defaultFS", "local")
-    conf.set("mapreduce.job.maps", "1")
-    conf.set("mapreduce.job.reduces", "1")
-    conf.set("mapred.textoutputformat.separator", ",")
+    conf.setJobName(task_config.getString(definitions.Job_Name))
+    conf.set(comm_config.getString(definitions.HDFS),comm_config.getString(definitions.Path))
+    conf.set(comm_config.getString(definitions.Map_Job), task_config.getString(definitions.Map_Cnt))
+    conf.set(comm_config.getString(definitions.Red_Job), task_config.getString(definitions.Red_Cnt))
+    conf.set(comm_config.getString(definitions.Seperator),definitions.Comma)
     conf.setOutputKeyClass(classOf[Text])
     conf.setOutputValueClass(classOf[IntWritable])
     conf.setMapperClass(classOf[Map])
