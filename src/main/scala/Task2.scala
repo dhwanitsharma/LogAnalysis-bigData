@@ -10,6 +10,9 @@ import java.util.regex.Pattern
 import scala.jdk.CollectionConverters.*
 import com.typesafe.config.ConfigFactory
 import Helper.Definitions
+import Helper.CreateLogger
+
+class Task2{}
 
 /**Task2 Mapper 1
  *
@@ -24,6 +27,8 @@ object Task2 {
   val definitions = new Definitions()
   val TaskConfig = "Task2"
   val Common = "Common"
+  val logger = CreateLogger(classOf[Task1])
+
   class Map extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable]:
     private final val one = new IntWritable(1)
     private val word = new Text()
@@ -41,6 +46,8 @@ object Task2 {
       val line: String = value.toString
       val arr = line.split(definitions.Blank).toList
       val matcher3 = patternReg.matcher(arr.last)
+      logger.info("Task2 Mapper1 for regex :"+ conf.getString(definitions.Det_pat))
+      logger.debug("Error Message : " + arr.last)
       if (matcher3.find()) {
         val dateFormatter = new SimpleDateFormat(conf.getString(definitions.TimePatSec))
         val date = ((dateFormatter.parse(arr.head)).getTime) / Thousand
@@ -51,6 +58,7 @@ object Task2 {
           val msg = matcherMsg.group()
           val msgType = d2
           word.set(msgType)
+          logger.debug("Mapper1 Output" + msgType+","+one)
           output.collect(word, one)
         }
       }
@@ -70,6 +78,7 @@ object Task2 {
       val l = value.toString.split(definitions.Comma).toList
       inputWord1.set(l.last)
       inputWord2.set(l.head)
+      logger.debug("Mapper2 Output" + l.head+","+l.last)
       output.collect(inputWord1, inputWord2)
 
 
@@ -85,6 +94,8 @@ object Task2 {
   class Reduce extends MapReduceBase with Reducer[Text, IntWritable, Text, IntWritable]:
     private final val one = 1
     override def reduce(key: Text, values: util.Iterator[IntWritable], output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
+      logger.info("Task2 Reducer2 for key :"+ key)
+      logger.debug(key.toString, values.toString)
       val sum = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(valueOne.get() + valueTwo.get()))
       output.collect(key,  new IntWritable(sum.get()))
 
@@ -101,6 +112,8 @@ object Task2 {
   class Reduce2 extends MapReduceBase with Reducer[Text, Text, Text, Text]:
     private val outputWord = new Text()
     override def reduce(key: Text, values: util.Iterator[Text], output: OutputCollector[Text, Text], reporter: Reporter): Unit =
+      logger.info("Task2 Reducer2 for key :"+ key)
+      logger.debug(key.toString, values.toString)
       val val1 = values.asScala.toList.head
       outputWord.set(val1)
       output.collect(key,outputWord)
@@ -114,6 +127,7 @@ object Task2 {
    */
   class DescendingComparator extends WritableComparator(classOf[Text],true){
     override def compare(w1: WritableComparable[_], w2: WritableComparable[_]): Int = {
+      logger.debug("Comparator W1, W2 = "+ w1+" "+w2)
       if(w1.toString.toInt <= w2.toString.toInt){
         return 1
       }
@@ -126,6 +140,7 @@ object Task2 {
   @main def runMapReduce3(inputPath: String, outputPath: String,inputPath1: String,  outputPath2: String) =
     require(!inputPath.isBlank && !outputPath.isBlank)
     println(inputPath)
+    logger.debug("Input + OutputPath ="+inputPath +"+"+ outputPath)
     val conf: JobConf = new JobConf(this.getClass)
     val configuration = ConfigFactory.load()
     val task_config = configuration.getConfig(TaskConfig)
@@ -144,8 +159,10 @@ object Task2 {
     conf.setOutputFormat(classOf[TextOutputFormat[Text, IntWritable]])
     FileInputFormat.setInputPaths(conf, new Path(inputPath))
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
+    logger.info("Task2 Job1 is starting")
     //JobClient.runJob(conf)
     if(JobClient.runJob(conf).isComplete.equals(true)){
+      logger.info("Task2 Job1 is Ended")
       val conf1: JobConf = new JobConf(this.getClass)
       conf1.setJobName(task_config.getString(definitions.Job_Name))
       conf1.set(comm_config.getString(definitions.HDFS),comm_config.getString(definitions.Path))
@@ -162,6 +179,7 @@ object Task2 {
       conf1.setOutputFormat(classOf[TextOutputFormat[Text, Text]])
       FileInputFormat.setInputPaths(conf1, new Path(inputPath1))
       FileOutputFormat.setOutputPath(conf1, new Path(outputPath2))
+      logger.info("Task2 Job2 is Starting")
       JobClient.runJob(conf1)
     }
 

@@ -10,11 +10,13 @@ import java.util.regex.Pattern
 import scala.jdk.CollectionConverters.*
 import java.text.SimpleDateFormat
 import java.util.Date
+import Helper.CreateLogger
 
 object Task4 {
   val definitions = new Definitions()
   val TaskConfig = "Task4"
   val Common = "Common"
+  val logger = CreateLogger(classOf[Task3])
 
   /**Task4 Mapper
    *
@@ -43,11 +45,14 @@ object Task4 {
       val lengthMsg = msq.length()
       val matcher3 = patternReg.matcher(arr.last)
       val lengthMsg1 = new IntWritable(lengthMsg)
+      logger.info("Task4 Mapper for regex :"+ conf.getString(definitions.Det_pat))
+      logger.debug(arr.last)
       if (matcher3.find()) {
         if(matcherMsg.find()){
           val msg = matcherMsg.group()
           val msgType = msg
           word.set(msgType)
+          logger.debug("Mapper Output" + msgType+","+one)
           output.collect(word, lengthMsg1)
         }
       }
@@ -64,12 +69,15 @@ object Task4 {
   class Reduce extends MapReduceBase with Reducer[Text, IntWritable, Text, IntWritable]:
     override def reduce(key: Text, values: util.Iterator[IntWritable], output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
       //Using Math.max to find the max value
+      logger.info("Task4 Reducer for key :"+ key)
+      logger.debug(key.toString, values.toString)
       val max = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(Math.max(valueOne.get(),valueTwo.get())))
       output.collect(key,  new IntWritable(max.get()))
 
   @main def runMapReduce2(inputPath: String, outputPath: String) =
     require(!inputPath.isBlank && !outputPath.isBlank)
     println(inputPath)
+    logger.debug("Input + OutputPath ="+inputPath +"+"+ outputPath)
     val configuration = ConfigFactory.load()
     val task_config = configuration.getConfig(TaskConfig)
     val comm_config = configuration.getConfig(Common)
@@ -88,5 +96,6 @@ object Task4 {
     conf.setOutputFormat(classOf[TextOutputFormat[Text, IntWritable]])
     FileInputFormat.setInputPaths(conf, new Path(inputPath))
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
+    logger.info("Task1 Job is starting")
     JobClient.runJob(conf)
 }

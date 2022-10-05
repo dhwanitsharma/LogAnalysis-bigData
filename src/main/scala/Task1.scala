@@ -10,12 +10,15 @@ import scala.jdk.CollectionConverters.*
 import java.text.SimpleDateFormat
 import java.util.Date
 import com.typesafe.config.ConfigFactory
+import Helper.CreateLogger
+
+class Task1{}
 
 object Task1 {
   val definitions = new Definitions()
   val TaskConfig = "Task1"
   val Common = "Common"
-
+  val logger = CreateLogger(classOf[Task2])
 
   /**Task1 Mapper
    *
@@ -31,6 +34,7 @@ object Task1 {
     private val word = new Text()
     private val Thousand = 1000
 
+
     @throws[IOException]
     override def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
       val config = ConfigFactory.load()
@@ -41,8 +45,10 @@ object Task1 {
       val matcherMsg = patternMsg.matcher(value.toString)
       val interval = task_config.getString(definitions.Interval).toInt
       val line: String = value.toString
+      logger.info("Task1 Mapper for regex :"+ conf.getString(definitions.Det_pat))
       val arr = line.split(definitions.Blank).toList
       val matcher3 = patternReg.matcher(arr.last)
+      logger.debug(arr.last)
       if (matcher3.find()) {
         val dateFormatter = new SimpleDateFormat(conf.getString(definitions.TimePatMilliSec))
         val dateFormatterRet = new SimpleDateFormat(conf.getString(definitions.TimePatSec))
@@ -54,6 +60,7 @@ object Task1 {
           val msg = matcherMsg.group()
           val msgType = d2 + definitions.Blank + msg //Building the key with TimeStamp + Msg type
           word.set(msgType)
+          logger.debug("Mapper Output" + msgType+","+one)
           output.collect(word, one)
         }
       }
@@ -65,12 +72,15 @@ object Task1 {
    */
   class Reduce extends MapReduceBase with Reducer[Text, IntWritable, Text, IntWritable]:
     override def reduce(key: Text, values: util.Iterator[IntWritable], output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
+      logger.info("Task1 Reducer for key :"+ key)
+      logger.debug(key.toString, values.toString)
       val sum = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(valueOne.get() + valueTwo.get()))
       output.collect(key,  new IntWritable(sum.get()))
 
   @main def runMapReduce1(inputPath: String, outputPath: String) =
     require(!inputPath.isBlank && !outputPath.isBlank)
     println(inputPath)
+    logger.debug("Input + OutputPath ="+inputPath +"+"+ outputPath)
     val configuration = ConfigFactory.load()
     val task_config = configuration.getConfig(TaskConfig)
     val comm_config = configuration.getConfig(Common)
@@ -89,5 +99,6 @@ object Task1 {
     conf.setOutputFormat(classOf[TextOutputFormat[Text, IntWritable]])
     FileInputFormat.setInputPaths(conf, new Path(inputPath))
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
+    logger.info("Task1 Job is starting")
     JobClient.runJob(conf)
 }
