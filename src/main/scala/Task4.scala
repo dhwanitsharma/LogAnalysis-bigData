@@ -87,7 +87,7 @@ object Task4 {
     val comm_config = configuration.getConfig(Common)
     val conf: JobConf = new JobConf(this.getClass)
     conf.setJobName(task_config.getString(definitions.Job_Name))
-    conf.set(comm_config.getString(definitions.HDFS),comm_config.getString(definitions.Path))
+    //conf.set(comm_config.getString(definitions.HDFS),comm_config.getString(definitions.Path))
     conf.set(comm_config.getString(definitions.Map_Job), task_config.getString(definitions.Map_Cnt))
     conf.set(comm_config.getString(definitions.Red_Job), task_config.getString(definitions.Red_Cnt))
     conf.set(comm_config.getString(definitions.Seperator),definitions.Comma)
@@ -102,5 +102,5 @@ object Task4 {
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
     logger.info("Task4 Job is starting")
     JobClient.runJob(conf)
-}
+  }
 }

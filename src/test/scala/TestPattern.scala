@@ -51,6 +51,4 @@ class TestPattern extends AnyFlatSpec with Matchers {
     assert(det_pattern.equals("HH:mm:ss"))
   }
 
-
-
 }

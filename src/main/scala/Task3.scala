@@ -63,7 +63,7 @@ object Task3 {
       output.collect(key,  new IntWritable(sum.get()))
 
  // @main def runMapReduce(inputPath: String, outputPath: String) =
- def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = {
     val inputPath = args(0)
     val outputPath = args(1)
     require(!inputPath.isEmpty && !outputPath.isEmpty)
@@ -73,7 +73,7 @@ object Task3 {
     val comm_config = configuration.getConfig(Common)
     val conf: JobConf = new JobConf(this.getClass)
     conf.setJobName(task_config.getString(definitions.Job_Name))
-    conf.set(comm_config.getString(definitions.HDFS),comm_config.getString(definitions.Path))
+    //conf.set(comm_config.getString(definitions.HDFS),comm_config.getString(definitions.Path))
     conf.set(comm_config.getString(definitions.Map_Job), task_config.getString(definitions.Map_Cnt))
     conf.set(comm_config.getString(definitions.Red_Job), task_config.getString(definitions.Red_Cnt))
     conf.set(comm_config.getString(definitions.Seperator),definitions.Comma)
@@ -88,5 +88,5 @@ object Task3 {
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
     logger.info("Task3 Job is starting")
     JobClient.runJob(conf)
-}
+  }
 }

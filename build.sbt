@@ -7,6 +7,11 @@ lazy val root = (project in file("."))
     name := "LogAnalysis_bigData"
   )
 
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs@_*) => MergeStrategy.discard
+  case x => MergeStrategy.first
+}
+
 libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "3.3.4"
 libraryDependencies += "org.apache.hadoop" % "hadoop-mapreduce-client-core" % "3.3.4"
 libraryDependencies += "org.apache.hadoop" % "hadoop-mapreduce-client-jobclient" % "3.3.4"
