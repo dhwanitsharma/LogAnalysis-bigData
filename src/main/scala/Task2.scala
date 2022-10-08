@@ -82,7 +82,7 @@ object Task2 {
       output.collect(inputWord1, inputWord2)
 
 
-  /**Task4 Reducer 1
+  /**Task2 Reducer 1
    *
    *This Reducer adds the value of Mapper 1 and finds the total value for each timeStamp.
    *
@@ -100,7 +100,7 @@ object Task2 {
       output.collect(key,  new IntWritable(sum.get()))
 
 
-  /**Task4 Reducer 2
+  /**Task2 Reducer 2
    *
    *This Reducer just formats the output. The compartor is used to change the sequece of the output
    *
@@ -119,7 +119,7 @@ object Task2 {
       output.collect(key,outputWord)
 
 
-  /**Task4 Compartor
+  /**Task2 Compartor
    *
    * This comparator compares the count of messages in each time interval
    * and sorts them out in descending order on the basis of the count
@@ -137,19 +137,22 @@ object Task2 {
 
 
 
-  @main def runMapReduce3(inputPath: String, outputPath: String,inputPath1: String,  outputPath2: String) =
-    require(!inputPath.isBlank && !outputPath.isBlank)
+  def main(args: Array[String]): Unit = {
+    val inputPath = args(0)
+    val tempPath = args(1)
+    val outputPath = args(2)
+    require(!inputPath.isEmpty && !outputPath.isEmpty && !tempPath.isEmpty)
     println(inputPath)
-    logger.debug("Input + OutputPath ="+inputPath +"+"+ outputPath)
+    logger.debug("Input + OutputPath =" + inputPath + "+" + outputPath)
     val conf: JobConf = new JobConf(this.getClass)
     val configuration = ConfigFactory.load()
     val task_config = configuration.getConfig(TaskConfig)
     val comm_config = configuration.getConfig(Common)
     conf.setJobName(task_config.getString(definitions.Job_Name))
-    conf.set(comm_config.getString(definitions.HDFS),comm_config.getString(definitions.Path))
+    conf.set(comm_config.getString(definitions.HDFS), comm_config.getString(definitions.Path))
     conf.set(comm_config.getString(definitions.Map_Job), task_config.getString(definitions.Map_Cnt))
     conf.set(comm_config.getString(definitions.Red_Job), task_config.getString(definitions.Red_Cnt))
-    conf.set(comm_config.getString(definitions.Seperator),definitions.Comma)
+    conf.set(comm_config.getString(definitions.Seperator), definitions.Comma)
     conf.setOutputKeyClass(classOf[Text])
     conf.setOutputValueClass(classOf[IntWritable])
     conf.setMapperClass(classOf[Map])
@@ -158,17 +161,17 @@ object Task2 {
     conf.setInputFormat(classOf[TextInputFormat])
     conf.setOutputFormat(classOf[TextOutputFormat[Text, IntWritable]])
     FileInputFormat.setInputPaths(conf, new Path(inputPath))
-    FileOutputFormat.setOutputPath(conf, new Path(outputPath))
+    FileOutputFormat.setOutputPath(conf, new Path(tempPath))
     logger.info("Task2 Job1 is starting")
     //JobClient.runJob(conf)
-    if(JobClient.runJob(conf).isComplete.equals(true)){
+    if (JobClient.runJob(conf).isComplete.equals(true)) {
       logger.info("Task2 Job1 is Ended")
       val conf1: JobConf = new JobConf(this.getClass)
       conf1.setJobName(task_config.getString(definitions.Job_Name))
-      conf1.set(comm_config.getString(definitions.HDFS),comm_config.getString(definitions.Path))
+      conf1.set(comm_config.getString(definitions.HDFS), comm_config.getString(definitions.Path))
       conf1.set(comm_config.getString(definitions.Map_Job), task_config.getString(definitions.Map_Cnt_2))
       conf1.set(comm_config.getString(definitions.Red_Job), task_config.getString(definitions.Red_Cnt_2))
-      conf1.set(comm_config.getString(definitions.Seperator),definitions.Comma)
+      conf1.set(comm_config.getString(definitions.Seperator), definitions.Comma)
       conf1.setOutputKeyComparatorClass(classOf[DescendingComparator])
       conf1.setOutputKeyClass(classOf[Text])
       conf1.setOutputValueClass(classOf[Text])
@@ -177,10 +180,10 @@ object Task2 {
       conf1.setReducerClass(classOf[Reduce2])
       conf1.setInputFormat(classOf[TextInputFormat])
       conf1.setOutputFormat(classOf[TextOutputFormat[Text, Text]])
-      FileInputFormat.setInputPaths(conf1, new Path(inputPath1))
-      FileOutputFormat.setOutputPath(conf1, new Path(outputPath2))
+      FileInputFormat.setInputPaths(conf1, new Path(tempPath))
+      FileOutputFormat.setOutputPath(conf1, new Path(outputPath))
       logger.info("Task2 Job2 is Starting")
       JobClient.runJob(conf1)
     }
-
+  }
 }

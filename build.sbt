@@ -14,3 +14,6 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 libraryDependencies += "org.slf4j"%"slf4j-api"%"2.0.1"
 libraryDependencies += "ch.qos.logback"%"logback-core"%"1.4.1"
 libraryDependencies += "ch.qos.logback"%"logback-classic"%"1.4.1"
+libraryDependencies += "org.scalactic"%%"scalactic"%"3.2.14"
+libraryDependencies += "org.scalatest"%%"scalatest"%"3.2.14"%Test
+libraryDependencies += "org.scalatest"%%"scalatest-featurespec"%"3.2.14"%Test

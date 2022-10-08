@@ -62,8 +62,11 @@ object Task3 {
       val sum = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(valueOne.get() + valueTwo.get()))
       output.collect(key,  new IntWritable(sum.get()))
 
-  @main def runMapReduce(inputPath: String, outputPath: String) =
-    require(!inputPath.isBlank && !outputPath.isBlank)
+ // @main def runMapReduce(inputPath: String, outputPath: String) =
+ def main(args: Array[String]): Unit = {
+    val inputPath = args(0)
+    val outputPath = args(1)
+    require(!inputPath.isEmpty && !outputPath.isEmpty)
     logger.debug("Input + OutputPath ="+inputPath +"+"+ outputPath)
     val configuration = ConfigFactory.load()
     val task_config = configuration.getConfig(TaskConfig)
@@ -85,4 +88,5 @@ object Task3 {
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
     logger.info("Task3 Job is starting")
     JobClient.runJob(conf)
+}
 }

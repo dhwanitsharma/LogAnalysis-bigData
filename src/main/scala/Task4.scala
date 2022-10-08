@@ -12,11 +12,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import Helper.CreateLogger
 
+class Task4{}
+
 object Task4 {
   val definitions = new Definitions()
   val TaskConfig = "Task4"
   val Common = "Common"
-  val logger = CreateLogger(classOf[Task3])
+  val logger = CreateLogger(classOf[Task4])
 
   /**Task4 Mapper
    *
@@ -71,12 +73,14 @@ object Task4 {
       //Using Math.max to find the max value
       logger.info("Task4 Reducer for key :"+ key)
       logger.debug(key.toString, values.toString)
-      val max = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(Math.max(valueOne.get(),valueTwo.get())))
-      output.collect(key,  new IntWritable(max.get()))
+      val redVal = values.asScala.map(value => value.get)
+      val max = redVal.reduceLeft(_ max _)
+      output.collect(key,  new IntWritable(max))
 
-  @main def runMapReduce2(inputPath: String, outputPath: String) =
-    require(!inputPath.isBlank && !outputPath.isBlank)
-    println(inputPath)
+  def main(args: Array[String]): Unit = {
+    val inputPath = args(0)
+    val outputPath = args(1)
+    require(!inputPath.isEmpty && !outputPath.isEmpty)
     logger.debug("Input + OutputPath ="+inputPath +"+"+ outputPath)
     val configuration = ConfigFactory.load()
     val task_config = configuration.getConfig(TaskConfig)
@@ -96,6 +100,7 @@ object Task4 {
     conf.setOutputFormat(classOf[TextOutputFormat[Text, IntWritable]])
     FileInputFormat.setInputPaths(conf, new Path(inputPath))
     FileOutputFormat.setOutputPath(conf, new Path(outputPath))
-    logger.info("Task1 Job is starting")
+    logger.info("Task4 Job is starting")
     JobClient.runJob(conf)
+}
 }
