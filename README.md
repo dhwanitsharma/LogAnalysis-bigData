@@ -1,7 +1,7 @@
 #  Dhwanit Sharma - HW1 CS441
 ## University of Illinois at Chicago
 
-##Introduction
+## Introduction
 This project is based on Apache Hadoop and contain 4 map-reduce program which are used in big data log analysis.
 A map-reduce job includes a map phase and reduce phase. 
 
@@ -33,7 +33,7 @@ The project structure is as follows:
          1. TestApplicationConf.scala
          2. TestPattern.scala
 
-##Installation Instructions
+## Installation Instructions
 This sections contains all the instructions to install and run all the Map-reduce programs
 1. Use the following URL to clone the project : git@github.com:dhwanitsharma/LogAnalysis-bigData.git
 2. In the root directory, run the command "sbt assembly" and this will create a jar in the following path:target/scala-3.1.3 
@@ -43,12 +43,12 @@ This sections contains all the instructions to install and run all the Map-reduc
 6. **Task3 :**, takes 2 inputs - Input path, Output path. To run this Task the command will be as : hadoop jar {JarName} {InputPath} {OutputPath}. Example "hadoop jar LogAnalysis_bigData-assembly-0.1.0-SNAPSHOT.jar path/logfiles/input path/logfiles/Task3_Output"
 7. **Task4 :**, takes 2 inputs - Input path, Output path. To run this Task the command will be as : hadoop jar {JarName} {InputPath} {OutputPath}. Example "hadoop jar LogAnalysis_bigData-assembly-0.1.0-SNAPSHOT.jar path/logfiles/input path/logfiles/Task4_Output"
 
-##Log File Description
+## Log File Description
 The input file for the programs will be a log file with a specific format where each line will have a log file such as "17:47:37.791 [scala-execution-context-global-25] WARN  HelperUtils.Parameters$ - Swq;g+6M:?820=Gmd#.p)sFaqo". 
 Where we have TimeStamp:17:47:37.791, Error Message Type:WARN, Error Message:Swq;g+6M:?820=Gmd#.p)sFaqo in each line.
 
-##Tasks Description
-###Task1
+## Tasks Description
+### Task1
 Log files are used as input. The mapper will take a fixed interval which will be used to distribute the messages. This interval is set in application.conf. The error messages will be matched with the predefined pattern which is also set in the application.conf file.
 The messages which will match the patterns will only be distributed in the pre-defined time intervals.
 
@@ -57,10 +57,10 @@ The output of the mapper will be the timestamp interval, message type  (INFO, DE
 Example output:17:46:00 WARN,5
 
 Here 17:46:00 is the Timestamp, WARN is the error message type, 5 is the total number in the given TimeInterval
-###Task2
-###Task3
-###Task4
+### Task2
+### Task3
+### Task4
 
-##AWS EMR Deployment
+## AWS EMR Deployment
 As shown in the video, build the file using "sbt compile" to build the jar. Upload the logfiles in a folder in a S3 bucket.
 Give the input path and the output path as shown in the video.
