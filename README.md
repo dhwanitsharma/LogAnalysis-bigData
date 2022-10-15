@@ -54,12 +54,38 @@ The messages which will match the patterns will only be distributed in the pre-d
 
 The output of the mapper will be the timestamp interval, message type  (INFO, DEBUG, ERROR, WARN), and interval count as 1. The reducer phase aggregates this and outputs number of messages of a particular message type in a given interval.
 
-Example output:17:46:00 WARN,5
+Example output : 17:46:00 WARN,5
 
 Here 17:46:00 is the Timestamp, WARN is the error message type, 5 is the total number in the given TimeInterval
 ### Task2
+Log files are used as input. The Task is to make a key value pair in descending order on the basis of the count of messages found in the time interval.
+These messages are of Error message type and should contain predefined pattern mentioned in the application.conf. In this task, there are two map/reduce programs
+
+The first map reduce program the mapper : maps the ERROR message type logs which have the specified pattern into the specific time and the reducer : Reducer adds the value of Mapper 1 and finds the total value for each timeStamp.
+The second map reduce program the mapper : This Mapper maps the output of reducer 1 in where keys and values are interchanged and the reducer : Reducer just formats the output. The comparator is used to change the sequence of the output
+
+Example output : 3,17:50:00
+
+Here 3 is the total number of Error messages with the pre-defined pattern present in the log files. 17:50:00 is the time stamp based on the interval.
+
 ### Task3
+Log files are used as input. The task is to calculate the total number of error messages for each messageType. It means we have to find the 
+total number of messages for each (INFO, DEBUG, ERROR, WARN) message type
+
+The output of the mapper will be the  message type (INFO, DEBUG, ERROR, WARN), and count as 1. The reducer will use these inputs to sum the total error messages of each type.
+
+Example output : WARN,223
+
+Here Warn is the messageType and 223 is the total amount of messages in the log file.
+
 ### Task4
+Log files are used as input. The task is to calculate the highest length of error message present in each messageType like (INFO, DEBUG, ERROR, WARN).
+
+The output of the mapper will be the  message type (INFO, DEBUG, ERROR, WARN) and value as length of each message. The reducer will use these inputs to find the maximum length value for each messageType.
+
+Example output : WARN,73
+
+Here Warn is the messageType and 73 is the length of the longest message for the message type.
 
 ## AWS EMR Deployment
 As shown in the video, build the file using "sbt compile" to build the jar. Upload the logfiles in a folder in a S3 bucket.
