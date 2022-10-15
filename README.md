@@ -8,6 +8,8 @@ A map-reduce job includes a map phase and reduce phase.
 In this program, the mapper splits the log file line using split function. Then it splits the log message into key,value pair which works as input for the Reducer.
 The value can be assigned as per the requirement of the Task.
 
+Video to show how to upload the map/reduce program on the AWS EMR <a href="https://youtu.be/ks-Tspn8JTU" target="_blank">Video</a>
+
 The Reducer Of Map-Reduce  is consist of mainly 3 processes/phases:
 1. **Shuffle:** Shuffling helps to carry data from the Mapper to the required Reducer.
 2. **Sort:** In this phase, the output of the mapper that is actually the key-value pairs will be sorted on the basis of its key value.
@@ -90,3 +92,5 @@ Here Warn is the messageType and 73 is the length of the longest message for the
 ## AWS EMR Deployment
 As shown in the video, build the file using "sbt compile" to build the jar. Upload the logfiles in a folder in a S3 bucket.
 Give the input path and the output path as shown in the video.
+
+<a href="https://youtu.be/ks-Tspn8JTU" target="_blank">Video</a>
