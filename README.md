@@ -40,10 +40,24 @@ This sections contains all the instructions to install and run all the Map-reduc
 1. Use the following URL to clone the project : git@github.com:dhwanitsharma/LogAnalysis-bigData.git
 2. In the root directory, run the command "sbt assembly" and this will create a jar in the following path:target/scala-3.1.3 
 3. Select a time interval in the application.conf. By default the time interval is 60 seconds. The time inteval is seconds example- for 2 mins, it should be set as 120
-4. **Task1 :** takes 2 inputs - Input path, Output path. To run this Task the command will be as : hadoop jar {JarName} {InputPath} {OutputPath}. Example "hadoop jar LogAnalysis_bigData-assembly-0.1.0-SNAPSHOT.jar path/logfiles/input path/logfiles/Task1_Output"
+4. **Task1 :** takes 2 inputs - Input path, Output path. To run this Task the command will be as : hadoop jar {JarName} {InputPath} {OutputPath}. Example "hadoop jar LogAnalysis_bigData-assembly-0.1.0-SNAPSHOT.jar path/logfiles/input path/logfiles/input path/logfiles/Task1_Output"
 5. **Task2 :**, takes 3 inputs - Input path,Temporary Output path, Output path. To run this Task the command will be as : hadoop jar {JarName} {InputPath} {TemporaryPath} {OutputPath}. Example "hadoop jar LogAnalysis_bigData-assembly-0.1.0-SNAPSHOT.jar path/logfiles/input path/logfiles/Task2Temp_Output path/logfiles/Task2_Output". The temporary output is explained in details in the Task 2 section.
 6. **Task3 :**, takes 2 inputs - Input path, Output path. To run this Task the command will be as : hadoop jar {JarName} {InputPath} {OutputPath}. Example "hadoop jar LogAnalysis_bigData-assembly-0.1.0-SNAPSHOT.jar path/logfiles/input path/logfiles/Task3_Output"
 7. **Task4 :**, takes 2 inputs - Input path, Output path. To run this Task the command will be as : hadoop jar {JarName} {InputPath} {OutputPath}. Example "hadoop jar LogAnalysis_bigData-assembly-0.1.0-SNAPSHOT.jar path/logfiles/input path/logfiles/Task4_Output"
+
+## Installation Instructions - Intellij
+This sections contains all the instructions to install and run all the Map-reduce programs
+1. Use the following URL to clone the project : git@github.com:dhwanitsharma/LogAnalysis-bigData.git
+2. Select File-> Project from existing sources... and select the folder
+3. Select Import project from external model and select sbt.
+4. Select scala version as Scala3 and a java version above java 11.
+5. Build the program
+7. Select a time interval in the application.conf. By default, the time interval is 60 seconds. The time inteval is seconds example- for 2 mins, it should be set as 120
+8. **Task1 :** takes 2 inputs - Input path, Output path. To run this Task the program arguments will be as : {InputPath} {OutputPath}. Example "path/logfiles/input path/logfiles/input path/logfiles/Task1_Output"
+9. **Task2 :**, takes 3 inputs - Input path,Temporary Output path, Output path. To run this Task the program arguments will be as : {InputPath} {TemporaryPath} {OutputPath}. Example "path/logfiles/input path/logfiles/Task2Temp_Output path/logfiles/Task2_Output". The temporary output is explained in details in the Task 2 section.
+10. **Task3 :**, takes 2 inputs - Input path, Output path. To run this Task the program arguments will be as : {InputPath} {OutputPath}. Example "path/logfiles/input path/logfiles/Task3_Output"
+11. **Task4 :**, takes 2 inputs - Input path, Output path. To run this Task the program arguments will be as : {InputPath} {OutputPath}. Example "path/logfiles/input path/logfiles/Task4_Output"
+
 
 ## Log File Description
 The input file for the programs will be a log file with a specific format where each line will have a log file such as "17:47:37.791 [scala-execution-context-global-25] WARN  HelperUtils.Parameters$ - Swq;g+6M:?820=Gmd#.p)sFaqo". 
